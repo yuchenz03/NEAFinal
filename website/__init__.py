@@ -1,15 +1,38 @@
+#Importing all the dependencies     
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from os import path
+from flask_login import LoginManager
 
-def create_app(): #This function sets up the flask application.
-    app = Flask(__name__)
-    app.config['SECRET_KEY'] = 'secret O.O'
+#Creating a database where user data can be stored after signup/ login
+db = SQLAlchemy()
+DB_NAME = "user.db"
+
+
+#This step is required to create a flask application - any website using flask requires this as the first step
+def create_app():
+    app = Flask(__name__) #variable name is name of the Flask app. __name__ is the name of the module used to run this app.
+    app.config['SECRET_KEY'] = "TSGOAT"
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_NAME}'
+    db.init_app(app)
     
-    from .views import views
-    from .login import login
+    from .pages import pages #there is a dot before pages after from because the function is within a python package. If it wasn't, you wouldn't need the dot
+    from .verif import verif
+
+    from .models import User #This must be done to create the user table when we open the database
+
+    with app.app_context():
+        db.create_all()
     
-    #to access whatever is within the file specified, the url will have /prefix/ruote.
-    app.register_blueprint(views, url_prefix='/')
-    app.register_blueprint(login, url_prefix='/')
-    
+    app.register_blueprint(pages,url_prefix="/")
+    app.register_blueprint(verif,url_prefix="/")
+
+    login_manager = LoginManager() #This is a login manager - allows logins to happen
+    login_manager.login_view = "auth.login"
+    login_manager.init_app(app)
+
+    @login_manager.user_loader
+    def load_user(id): #This function allows us to access a particular user given their id
+        return User.query.get(int(id)) 
+
     return app
-    

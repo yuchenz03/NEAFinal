@@ -8,5 +8,3 @@ if __name__ == '__main__': #the app is only created if the main.py file is being
                            #a change in our code, the website will automatically 
                            #rerun. Turn off when not developing.
 
-
-                        
