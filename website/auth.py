@@ -52,6 +52,7 @@ def coach_sign_up():
         surname = request.form.get('surname')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
+        role = "coach"
 
         user = User.query.filter_by(email=email).first()
         if user:
@@ -72,7 +73,7 @@ def coach_sign_up():
             flash('Password must contain both letters and numbers.')
         else:
             new_user = User(email=email, forename=forename, surname=surname, password=generate_password_hash(
-                password1, method='sha256', role="coach"))
+                password1, method='sha256'), role=role)
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
@@ -89,6 +90,7 @@ def swimmer_sign_up():
         surname = request.form.get('surname')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
+        role = "swimmer"
 
         user = User.query.filter_by(email=email).first()
         if user:
@@ -105,11 +107,11 @@ def swimmer_sign_up():
             flash('Passwords don\'t match.', category='error')
         elif len(password1) < 8:
             flash('Password must be at least 8 characters.', category='error')
-        elif password1.isalnum() and not password1.isalpha() and not password1.isdigit():        
-            flash('Password must contain both letters and numbers.')
+        elif password1.isalpha() == False and password1.isdigit() == False:        
+            flash('Password must contain both letters and numbers.', category='error')
         else:
             new_user = User(email=email, forename=forename, surname=surname, password=generate_password_hash(
-                password1, method='sha256', role="swimmer"))
+                password1, method='sha256'), role=role)
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True)
