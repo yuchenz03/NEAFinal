@@ -28,7 +28,10 @@ def login():
             if check_password_hash(user.password, password):
                 flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)
-                return redirect(url_for('views.home'))
+                if user.role == "swimmer":
+                    return redirect(url_for('pages.swimmerDashboard'))
+                elif user.role == "coach":
+                    return redirect(url_for('pages.coachDashboard'))
             else:
                 flash('Incorrect password, try again.', category='error')
         else:
@@ -69,8 +72,8 @@ def coach_sign_up():
             flash('Passwords don\'t match.', category='error')
         elif len(password1) < 8:
             flash('Password must be at least 8 characters.', category='error')
-        elif password1.isalnum() and not password1.isalpha() and not password1.isdigit():        
-            flash('Password must contain both letters and numbers.')
+        # elif password1.isalnum() and not password1.isalpha() and not password1.isdigit():        
+        #     flash('Password must contain both letters and numbers.', category='error')
         else:
             new_user = User(email=email, forename=forename, surname=surname, password=generate_password_hash(
                 password1, method='sha256'), role=role)
@@ -78,7 +81,7 @@ def coach_sign_up():
             db.session.commit()
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
-            return redirect(url_for('pages.home'))
+            return redirect(url_for('pages.coachDashboard'))
 
     return render_template("coachSignup.html", user=current_user)
 
@@ -107,8 +110,8 @@ def swimmer_sign_up():
             flash('Passwords don\'t match.', category='error')
         elif len(password1) < 8:
             flash('Password must be at least 8 characters.', category='error')
-        elif password1.isalpha() == False and password1.isdigit() == False:        
-            flash('Password must contain both letters and numbers.', category='error')
+        # elif password1.isalpha() == False and password1.isdigit() == False:        
+        #     flash('Password must contain both letters and numbers.', category='error')
         else:
             new_user = User(email=email, forename=forename, surname=surname, password=generate_password_hash(
                 password1, method='sha256'), role=role)
@@ -116,6 +119,6 @@ def swimmer_sign_up():
             db.session.commit()
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
-            return redirect(url_for('views.home'))
+            return redirect(url_for('pages.swimmerDashboard'))
 
     return render_template("swimmerSignup.html", user=current_user)

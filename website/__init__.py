@@ -16,9 +16,10 @@ def create_app():
 
     # from .pages import pages
     from .auth import auth #there is a dot before pages after from because the function is within a python package. If it wasn't, you wouldn't need the dot
-
+    from .pages import pages
     # app.register_blueprint(pages, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
+    app.register_blueprint(pages, url_prefix='/')
 
     from .models import User #This must be done to create the user table when we open the database
     

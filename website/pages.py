@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash #From the flask application, import Blueprint
 from . import db
-from .models import User
+from .models import User, Squads
 from flask_login import current_user
 import sqlite3
 from random import randint
@@ -20,11 +20,12 @@ def conversionTool():
 
 @pages.route("/coachDashboard")
 def coachDashboard():
-    #swimJournal = get_db_connection()
-    #coachID = current_user.get_id()
-    #name = swimJournal.execute('SELECT CForename FROM coach WHERE id="coachID"').fetchall()
-    #swimJournal.close()
-    return render_template("coachDashboard.html") #, name = name
+    user = User.query.filter_by(id=current_user.id).first()
+    if user:
+        name=current_user.forename.capitalize()
+    else:
+        name=""
+    return render_template("coachDashboard.html", name=name) #, name = name
     #To pass in a variable from the backend to the frontend, do this:
     #return render_template("home.html", name = 1). If you then place this {{name}} into the specified html page, it will return
     #the value of that variable.
@@ -32,14 +33,13 @@ def coachDashboard():
 
 @pages.route("/swimmerDashboard") 
 def swimmerDashboard():
-    #swimJournal = get_db_connection()
-    #swimmerID = current_user.get_id()
-    #name = swimJournal.execute('SELECT SForename FROM swimmer WHERE id=swimmerID').fetchall()
-    #swimJournal.close()
-    return render_template("swimmerDashboard.html", name = "me!") #, name = name
-    #To pass in a variable from the backend to the frontend, do this:
-    #return render_template("home.html", name = 1). If you then place this {{name}} into the specified html page, it will return
-    #the value of that variable.
+    user = User.query.filter_by(id=current_user.id).first()
+    if user:
+        name=current_user.forename.capitalize()
+    else:
+        name=""
+    return render_template("swimmerDashboard.html", name = name) #, name = name
+   
 
 
 ### Pages for the swimmers ###
