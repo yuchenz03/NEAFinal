@@ -1,6 +1,26 @@
 {% extends "sdashboardBase.html" %}
 {% block title %}
 The Swim Journal | Dashboard
+<style>
+    tr:nth-child(even) {
+        background-color: #e5e5e5;
+    }
+    .table {
+        border-spacing:5px;
+        text-align:left;
+    }
+    .table__row:nth-child(even) {
+        background-color: #e5e5e5;
+    }
+
+    .table__header {
+        text-align:left;
+    }
+
+    .table__cell {
+        padding: 8px;
+    }
+</style>
 {% endblock %}
 {% block sidenav %}
     <!--This is the side navbar-->
@@ -31,11 +51,27 @@ The Swim Journal | Dashboard
 
 {% block content %}
 <h1>Journal</h1>
-<div class="container", style="border: 1px solid #ccc; margin:0px; margin-bottom:20px; height: 200px; border-radius: 15px; width:850px; position: relative">
-Lol hi
-</div>
-<div class="container", style="border: 1px solid #ccc; margin:0px; height: 200px;border-radius: 15px; width:850px; position: relative"">
-    Lol hi pt 2
+<ul class="list-group list-group-flush" id="journal">
+    {% for journal in user.journal %}
+        <table>
+            <tr>
+                <th>{{journal.date}}</th>
+                <th>
+                    {{ journal.entry }} 
+                    <button type="button" class="close" onClick="deleteJournal({{ journal.id }})">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </th>
+            </tr>
+        </table>
+    {% endfor %}
+  </ul>
+  <form method="POST">
+    <textarea name="entry" id="entry" class="form-control"></textarea>
+    <br />
+    <div>
+      <button type="submit" class="btn btn-primary">Add Entry</button>
     </div>
-{% endblock %}
+  </form>
+  {% endblock %}
 

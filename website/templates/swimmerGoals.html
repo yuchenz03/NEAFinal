@@ -31,11 +31,21 @@ The Swim Journal | Dashboard
 
 {% block content %}
 <h1>Goals</h1>
-<div class="container", style="border: 1px solid #ccc; margin:0px; margin-bottom:20px; height: 200px; border-radius: 15px; width:850px; position: relative">
-Lol hi
-</div>
-<div class="container", style="border: 1px solid #ccc; margin:0px; height: 200px;border-radius: 15px; width:850px; position: relative"">
-    Lol hi pt 2
+<ul class="list-group list-group-flush" id="goals">
+    {% for goal in user.goals %}
+    <li class="list-group-item">
+      {{ goal.data }}
+      <button type="button" class="close" onClick="deleteGoal({{ goal.id }})">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </li>
+    {% endfor %}
+  </ul>
+  <form method="POST">
+    <textarea name="goal" id="goal" class="form-control"></textarea>
+    <br />
+    <div>
+      <button type="submit" class="btn btn-primary">Add Goal</button>
     </div>
-{% endblock %}
-
+  </form>
+  {% endblock %}

@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash #From the flask application, import Blueprint
+from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify #From the flask application, import Blueprint
 from . import db
-from .models import User, Squads
-from flask_login import current_user
+from .models import User, Squads, Goals, Journal, Times
+from flask_login import current_user, login_required
 import sqlite3
 from random import randint
+import json
 
 
 
@@ -17,7 +18,7 @@ pages = Blueprint("pages", __name__) #The blueprint name is now pages
 def conversionTool():
     return render_template("conversionTool.html") #renders conversion tool template
 
-
+@login_required
 @pages.route("/coachDashboard")
 def coachDashboard():
     user = User.query.filter_by(id=current_user.id).first()
@@ -30,7 +31,7 @@ def coachDashboard():
     #return render_template("home.html", name = 1). If you then place this {{name}} into the specified html page, it will return
     #the value of that variable.
     #return render_template("coachDashboard.html")
-
+@login_required
 @pages.route("/swimmerDashboard") 
 def swimmerDashboard():
     user = User.query.filter_by(id=current_user.id).first()
@@ -43,32 +44,96 @@ def swimmerDashboard():
 
 
 ### Pages for the swimmers ###
+@login_required
 @pages.route("/swimmerSession") 
 def swimmerSession():
     return render_template("swimmerSession.html")
 
-@pages.route("/swimmerJournal") 
+@login_required
+@pages.route("/swimmerJournal", methods=["GET","POST"]) 
 def swimmerJournal():
-    return render_template("swimmerJournal.html")
+    if request.method == 'POST': 
+        entry = request.form.get('entry')#Gets the goal from the HTML 
+        
+        if len(entry) < 1:
+            flash('Entry is too short!', category='error') 
+        else:
+            new_entry = Journal(entry=entry, user_id=current_user.id)  #providing the schema for the note 
+            db.session.add(new_entry) #adding the note to the database 
+            db.session.commit()
+            flash('Entry added!', category='success')
+    return render_template("swimmerJournal.html", user=current_user)
 
+#Used to delete goals
+@pages.route('/delete-entry', methods=['POST'])
+def entry():  
+    entry = json.loads(request.data) # this function expects a JSON from the INDEX.js file 
+    entryID = entry['entryID']
+    entry = Journal.query.get(entryID)
+    if entry:
+        if entry.user_id == current_user.id:
+            db.session.delete(entry)
+            db.session.commit()
+
+    return jsonify({})
+
+@login_required
 @pages.route("/swimmerAttendance") 
 def swimmerAttendance():
     return render_template("swimmerAttendance.html")
 
-@pages.route("/swimmerGoals") 
+@login_required
+@pages.route("/swimmerGoals", methods=["GET","POST"]) 
 def swimmerGoals():
-    return render_template("swimmerGoals.html")
+    if request.method == 'POST': 
+        goal = request.form.get('goal')#Gets the goal from the HTML 
+        
+        if len(goal) < 1:
+            flash('Goal is too short!', category='error') 
+        else:
+            new_note = Goals(data=goal, user_id=current_user.id)  #providing the schema for the note 
+            db.session.add(new_note) #adding the note to the database 
+            db.session.commit()
+            flash('Goal added!', category='success')
+    return render_template("swimmerGoals.html", user=current_user)
 
-@pages.route("/swimmerPBs") 
+#Used to delete goals
+@pages.route('/delete-note', methods=['POST'])
+def delete_note():  
+    goal = json.loads(request.data) # this function expects a JSON from the INDEX.js file 
+    goalID = goal['goalID']
+    note = Goals.query.get(goalID)
+    if note:
+        if note.user_id == current_user.id:
+            db.session.delete(note)
+            db.session.commit()
+
+    return jsonify({})
+
+@login_required
+@pages.route("/swimmerPBs", methods={'GET','POST'}) 
 def swimmerPBs():
-    return render_template("swimmerPBs.html")
+    if request.method == 'POST': 
+        event = request.form.get('event')
+        competition = request.form.get('competition')
+        time = request.form.get('time')#Gets the goal from the HTML 
+        
+        if len(event) < 1:
+            flash('Invalid entry!', category='error') 
+        else:
+            new_note = Times(event = event, time = time, competition = competition, user_id=current_user.id)  #providing the schema for the note 
+            db.session.add(new_note) #adding the note to the database 
+            db.session.commit()
+            flash('Time added!', category='success')
+    return render_template("swimmerPBs.html", user=current_user)
 
 ### Pages for the Coaches ###
-
+@login_required
 @pages.route("/coachSession") 
 def coachSession():
     return render_template("coachSession.html")
 
+@login_required
 @pages.route("/coachSwimmers", methods = {'GET', 'POST'}) 
 def coachSwimmers():
     if request.method == 'POST':
@@ -86,11 +151,12 @@ def coachSwimmers():
             db.session.commit()
     return render_template("coachSwimmers.html")
             
-            
+@login_required   
 @pages.route("/coachJournal") 
 def coachJournal():
     return render_template("coachJournal.html")
 
+@login_required
 @pages.route("/coachAttendance") 
 def coachAttendance():
     return render_template("coachAttendance.html")

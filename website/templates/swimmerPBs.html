@@ -31,11 +31,53 @@ The Swim Journal | Dashboard
 
 {% block content %}
 <h1>Personal Bests</h1>
-<div class="container", style="border: 1px solid #ccc; margin:0px; margin-bottom:20px; height: 200px; border-radius: 15px; width:850px; position: relative">
-Lol hi
-</div>
-<div class="container", style="border: 1px solid #ccc; margin:0px; height: 200px;border-radius: 15px; width:850px; position: relative"">
-    Lol hi pt 2
+<ul class="list-group list-group-flush" id="times">
+    {% for time in user.times %}
+        <table>
+            <tr>
+                <th>{{time.event}}</th>
+                <th>
+                    {{time.time}} 
+                </th>
+                <th>
+                    {{time.competition}} 
+                    <button type="button" class="close" onClick="deleteTimes({{ time.id }})">
+                        <span aria-hidden="true">&times;</span>
+                        </button>
+                </th>
+            </tr>
+        </table>
+    {% endfor %}
+  </ul>
+  <form method="POST">
+    <label for="event">Event</label>
+    <input
+      type="text"
+      id="event"
+      name="event"
+      class="form-control"
+      placeholder="Enter Event: (distance) (stroke)"
+    />
+    <label for="time">Time</label>
+    <input
+      type="text"
+      id="time"
+      name="time"
+      class="form-control"
+      placeholder="Enter Time"
+    />
+    <label for="competition">Competition</label>
+    <input
+      type="text"
+      id="competition"
+      name="competition"
+      class="form-control"
+      placeholder="Enter Competition"
+    />
+    <br />
+    <div>
+      <button type="submit" class="btn btn-primary">Add Entry</button>
     </div>
+  </form>
 {% endblock %}
 
