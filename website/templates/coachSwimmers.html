@@ -44,9 +44,9 @@ The Swim Journal | Dashboard
     <ul class="list-group list-group-flush" id="squads">
       {% for squad in user.squad %}
           <table>
-            <tr>{{squad.squadName}}</tr>
-            
-            <tr>{{squad.squadCode}}</tr>
+            <th>{{squad.squadName}}</th>
+
+            <th>{{squad.squadCode}}</th>
           </table>
       {% endfor %}
     </ul>
