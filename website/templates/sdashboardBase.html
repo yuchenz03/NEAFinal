@@ -20,6 +20,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
   
   <title>{% block title %}{% endblock %}</title> <!--This line allows children templates to inherit this base template and then change the content within the blocks-->
+  {% block head %}{% endblock %}
 </head>
 
 {% block style %}{% endblock %}
@@ -53,26 +54,6 @@
   ></script>
 
 {% block javascript %}
-  <script type="text/javascript">
-    function deleteGoal(goalID) {
-fetch("/delete-goal", {
-  method: "POST",
-  body: JSON.stringify({ goalID: goalID }),
-}).then((_res) => {
-  window.location.href = "/swimmerGoals";
-});
-}
-</script>
-<script type="text/javascript">
-    function deleteTime(timeID) {
-fetch("/delete-time", {
-  method: "POST",
-  body: JSON.stringify({ timeID: timeID }),
-}).then((_res) => {
-  window.location.href = "/swimmerPBs";
-});
-}
-</script>
 {% endblock %}
 </body>
 </html>

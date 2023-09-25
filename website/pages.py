@@ -50,10 +50,15 @@ def swimmerSession():
     return render_template("swimmerSession.html")
 
 @login_required
+@pages.route("/swimmerSettings") 
+def swimmerSettings():
+    return render_template("swimmerSettings.html")
+
+@login_required
 @pages.route("/swimmerJournal", methods=["GET","POST"]) 
 def swimmerJournal():
     if request.method == 'POST': 
-        entry = request.form.get('entry')#Gets the goal from the HTML 
+        entry = request.form.get('entry')#Gets the entry from the HTML 
         
         if len(entry) < 1:
             flash('Entry is too short!', category='error') 
@@ -62,11 +67,12 @@ def swimmerJournal():
             db.session.add(new_entry) #adding the note to the database 
             db.session.commit()
             flash('Entry added!', category='success')
+            
     return render_template("swimmerJournal.html", user=current_user)
 
 #Used to delete goals
 @pages.route('/delete-entry', methods=['POST'])
-def entry():  
+def delete_entry():  
     entry = json.loads(request.data) # this function expects a JSON from the INDEX.js file 
     entryID = entry['entryID']
     entry = Journal.query.get(entryID)
@@ -86,7 +92,7 @@ def swimmerAttendance():
 @pages.route("/swimmerGoals", methods=["GET","POST"]) 
 def swimmerGoals():
     if request.method == 'POST': 
-        goal = request.form.get('goal')#Gets the goal from the HTML 
+        goal = request.form.get('goal') #Gets the goal from the HTML 
         
         if len(goal) < 1:
             flash('Goal is too short!', category='error') 
@@ -98,14 +104,14 @@ def swimmerGoals():
     return render_template("swimmerGoals.html", user=current_user)
 
 #Used to delete goals
-@pages.route('/delete-note', methods=['POST'])
-def delete_note():  
+@pages.route('/delete-goal', methods=['POST'])
+def delete_goal():  
     goal = json.loads(request.data) # this function expects a JSON from the INDEX.js file 
     goalID = goal['goalID']
-    note = Goals.query.get(goalID)
-    if note:
-        if note.user_id == current_user.id:
-            db.session.delete(note)
+    goal = Goals.query.get(goalID)
+    if goal:
+        if goal.user_id == current_user.id:
+            db.session.delete(goal)
             db.session.commit()
 
     return jsonify({})
@@ -127,6 +133,19 @@ def swimmerPBs():
             flash('Time added!', category='success')
     return render_template("swimmerPBs.html", user=current_user)
 
+#Used to delete times
+@pages.route('/delete-time', methods=['POST'])
+def delete_time():  
+    time = json.loads(request.data) # this function expects a JSON from the INDEX.js file 
+    timeID = time['timeID']
+    time = Times.query.get(timeID)
+    if time:
+        if time.user_id == current_user.id:
+            db.session.delete(time)
+            db.session.commit()
+
+    return jsonify({})
+
 ### Pages for the Coaches ###
 @login_required
 @pages.route("/coachSession") 
@@ -142,14 +161,14 @@ def coachSwimmers():
         
         if squadName_exists:
             flash("Squad name already in use.", category="error")
-        elif squadName < 2:
+        elif len(squadName) < 2:
             flash("Squad name too short.", category="error")
         else:
             squadCode = randint(1000,9999)
-            new_squad = Squads(squadName=squadName, squadCode=squadCode)
+            new_squad = Squads(squadName=squadName, squadCode=squadCode, user_id = current_user.id)
             db.session.add(new_squad)
             db.session.commit()
-    return render_template("coachSwimmers.html")
+    return render_template("coachSwimmers.html", user=current_user)
             
 @login_required   
 @pages.route("/coachJournal") 

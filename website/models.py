@@ -6,6 +6,7 @@ class Squads(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     squadName = db.Column(db.String(150), unique=True)
     squadCode = db.Column(db.String(4), unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
 class Goals(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -26,7 +27,14 @@ class Journal(db.Model):
     entry = db.Column(db.String(10000))
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    
+
+class Attendance(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    entry = db.Column(db.String(10000))
+    date = db.Column(db.DateTime(timezone=True), default=func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+
 class User(db.Model, UserMixin): #Creating the user model
     id = db.Column(db.Integer, primary_key=True) #This userID is the primary key and unique to each user
     forename = db.Column(db.String(150))
@@ -38,3 +46,5 @@ class User(db.Model, UserMixin): #Creating the user model
     goals = db.relationship('Goals')
     journal = db.relationship('Journal')
     times = db.relationship('Times')
+    attendance = db.relationship('Attendance')
+    squad = db.relationship('Squads')

@@ -7,7 +7,7 @@ function deleteGoal(goalID) {
     });
   }
 
-function deleteTime(timeID) {
+function deleteTimes(timeID) {
     fetch("/delete-time", {
       method: "POST",
       body: JSON.stringify({ timeID: timeID }),
@@ -19,7 +19,7 @@ function deleteTime(timeID) {
 function deleteEntry(entryID) {
     fetch("/delete-entry", {
       method: "POST",
-      body: JSON.stringify({ timeID: entryID }),
+      body: JSON.stringify({ entryID: entryID }),
     }).then((_res) => {
       window.location.href = "/swimmerJournal";
     });

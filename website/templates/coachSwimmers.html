@@ -5,32 +5,34 @@ The Swim Journal | Dashboard
 {% block sidenav %}
     <!--This is the side navbar-->
     <nav style="font-family: Times New Roman; position: absolute;top:83px;bottom: 0;height: 100%;left: 0;background:#E4FCFF;width: 130px;overflow: hidden;transition: width 0.2s linear;padding: 10px;text-align: left;">
-          <a style="position: relative; color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 15px; top: 10px" href="/coachSession">
-            <span class=""nav-tiem">Today's Session</span>
-          </a>
-          <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/coachSwimmers">
-            <span class=""nav-tiem">My Swimmers</span>
-          </a>
-          <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/coachAttendance">
-            <span class=""nav-tiem">Attendance</span>
-          </a>
-          <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/coachJournal">
-            <span class=""nav-tiem">Journal</span>
-          </a>
-          <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/conversionTool">
-            <span class=""nav-tiem">Convert Times</span>
-          </a>
-          <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/logout">
-            <span class=""nav-tiem">Logout</span>
-          </a>
-    </nav>
+      <a style="position: relative; color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 15px; top: 10px" href="/coachSession">
+        <span class=""nav-tiem">Today's Session</span>
+      </a>
+      <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/coachSwimmers">
+        <span class=""nav-tiem">My Swimmers</span>
+      </a>
+      <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/coachAttendance">
+        <span class=""nav-tiem">Attendance</span>
+      </a>
+      <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/coachJournal">
+        <span class=""nav-tiem">Journal</span>
+      </a>
+      <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/conversionTool">
+        <span class=""nav-tiem">Convert Times</span>
+      </a>
+      <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/coachSettings">
+        <span class=""nav-tiem">Account Settings</span>
+      </a>
+      <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/logout">
+        <span class=""nav-tiem">Logout</span>
+      </a>
+</nav>
 {% endblock %}
 
 {% block content %}
 <h1>My Swimmers</h1>
 <div class="container" >
     <h2>Create a Squad</h2>
-    
     <form method="POST">
         <label for="squadName">Squad Name:</label>
         <input type="text" id="squadName" name="squadName" required><br><br>
@@ -38,9 +40,33 @@ The Swim Journal | Dashboard
         <input type="submit" value="Create Squad">
     </form>
 
-    {% if squadID %}
-    <p>Your Squad Code: <strong>{{ squadID }}</strong></p>
-    {% endif %}
+    <h2>My Squads</h2>
+    <ul class="list-group list-group-flush" id="squads">
+      {% for squad in user.squad %}
+          <table>
+            <tr>{{squad.squadName}}</tr>
+            
+            <tr>{{squad.squadCode}}</tr>
+          </table>
+      {% endfor %}
+    </ul>
 </div>
 
 {% endblock %} 
+
+{% for time in user.times %}
+<table>
+    <tr>
+        <th>{{time.event}}</th>
+        <th>
+            {{time.time}} 
+        </th>
+        <th>
+            {{time.competition}} 
+            <button type="button" class="close" onClick="deleteTimes('{{time.id}}')">
+                <span aria-hidden="true">&times;</span>
+                </button>
+        </th>
+    </tr>
+</table>
+{% endfor %}

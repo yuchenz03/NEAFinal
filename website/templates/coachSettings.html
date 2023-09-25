@@ -1,19 +1,8 @@
-{% extends "sdashboardBase.html" %}
+{% extends "cdashboardBase.html" %}
 {% block title %}
-The Swim Journal | Dashboard
+The Swim Journal | Settings
 {% endblock %}
 {% block sidenav %}
-<!--This is used in the delete function-->
-<script type="text/javascript">
-  function deleteGoal(goalID) {
-fetch("/delete-goal", {
-method: "POST",
-body: JSON.stringify({ goalID: goalID }),
-}).then((_res) => {
-window.location.href = "/swimmerGoals";
-});
-}
-</script>
     <!--This is the side navbar-->
     <nav style="font-family: Times New Roman; position: absolute;top:83px;bottom: 0;height: 100%;left: 0;background:#E4FCFF;width: 130px;overflow: hidden;transition: width 0.2s linear;padding: 10px;text-align: left;">
       <a style="position: relative; color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 15px; top: 10px" href="/swimmerSession">
@@ -34,7 +23,7 @@ window.location.href = "/swimmerGoals";
       <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/conversionTool">
         <span class=""nav-tiem">Convert Times</span>
       </a>
-      <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/swimmerSettings">
+      <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/conversionTool">
         <span class=""nav-tiem">Account Settings</span>
       </a>
       <a style="position: relative;color: rgb(85, 83, 83);font-size: 18px;display: table;width: 300px; margin-bottom: 5px;" href="/logout">
@@ -44,25 +33,12 @@ window.location.href = "/swimmerGoals";
 {% endblock %}
 
 {% block content %}
-<h1>Goals</h1>
-<h2>Today's session goals</h2>
-<ul class="list-group list-group-flush" id="goals">
-    {% for goal in user.goals %}
-    <li class="list-group-item">
-      {{ goal.data }}
-      <button type="button" class="close" onClick="deleteGoal('{{goal.id}}')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </li>
-    {% endfor %}
-  </ul>   
-  <form method="POST">
-    <textarea name="goal" id="goal" class="form-control"></textarea>
-    <br />
-    <div>
-      <button type="submit" class="btn btn-primary">Add Goal</button>
+<h1>Account Settings</h1>
+<div class="container", style="border: 1px solid #ccc; margin:0px; margin-bottom:20px; height: 200px; border-radius: 15px; width:850px; position: relative">
+Lol hi
+</div>
+<div class="container", style="border: 1px solid #ccc; margin:0px; height: 200px;border-radius: 15px; width:850px; position: relative"">
+    Lol hi pt 2
     </div>
-  </form>
-  <h2>Season goals</h2>
-  <h2>Year goals</h2>
-  {% endblock %}
+{% endblock %}
+
