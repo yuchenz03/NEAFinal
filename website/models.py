@@ -1,12 +1,6 @@
 from . import db #Import all from db
 from flask_login import UserMixin
 from sqlalchemy.sql import func
-
-class Squads(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    squadName = db.Column(db.String(150), unique=True)
-    squadCode = db.Column(db.String(4), unique=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     
 class Goals(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -42,9 +36,16 @@ class User(db.Model, UserMixin): #Creating the user model
     email = db.Column(db.String(150), unique=True) #unique=True ensures that no users have duplicate emails and usernames
     password = db.Column(db.String(150))
     date_created = db.Column(db.DateTime(timezone=True), default=func.now()) #The date and time when this is stored is saved as a new column
+    squads_id = db.Column(db.Integer, db.ForeignKey('squads.id'))
+    squad = db.relationship('Squads', back_populates='user')
     role = db.Column(db.String(7))
     goals = db.relationship('Goals')
     journal = db.relationship('Journal')
     times = db.relationship('Times')
     attendance = db.relationship('Attendance')
-    squad = db.relationship('Squads')
+
+class Squads(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    squadName = db.Column(db.String(150), unique=True)
+    squadCode = db.Column(db.String(4), unique=True)
+    user = db.relationship('User', back_populates='squad')

@@ -22,7 +22,7 @@ def conversionTool():
 @pages.route("/coachDashboard")
 def coachDashboard():
     user = User.query.filter_by(id=current_user.id).first()
-    if user:
+    if user: 
         name=current_user.forename.capitalize()
     else:
         name=""
@@ -155,7 +155,10 @@ def coachSession():
 @login_required
 @pages.route("/coachSwimmers", methods = {'GET', 'POST'}) 
 def coachSwimmers():
-    if request.method == 'POST':
+    user = User.query.filter_by(id=current_user.id).first()
+    squad=""
+    members=[]
+    if request.method == 'POST': 
         squadName = request.form.get('squadName')
         squadName_exists = Squads.query.filter_by(squadName=squadName).first()
         
@@ -165,12 +168,24 @@ def coachSwimmers():
             flash("Squad name too short.", category="error")
         else:
             squadCode = randint(1000,9999)
-            new_squad = Squads(squadName=squadName, squadCode=squadCode, user_id = current_user.id)
+            new_squad = Squads(id=squadCode, squadName=squadName, squadCode=squadCode)
             db.session.add(new_squad)
             db.session.commit()
-    return render_template("coachSwimmers.html", user=current_user)
-            
-@login_required   
+    
+            squad_id = squadCode
+            user.squads_id = squad_id  #####THIS IS THE LINE THAT DOESN'T WORK!!!
+            squad = Squads.query.get(squad_id)
+            members = User.query.filter_by(squads_id=squad_id).all()
+            if squad is None:
+                # Handle the case where the squad does not exist
+                squad=[]
+            if members is None:
+                members=[]
+            return "user's squad updated successfully"
+    
+    return render_template("coachSwimmers.html", user=current_user, squad=squad,members=members)
+
+@login_required
 @pages.route("/coachJournal") 
 def coachJournal():
     return render_template("coachJournal.html")

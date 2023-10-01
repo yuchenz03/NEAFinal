@@ -2,6 +2,26 @@
 {% block title %}
 The Swim Journal | Dashboard
 {% endblock %}
+{% block style%}
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+{% endblock %}
+
 {% block sidenav %}
     <!--This is the side navbar-->
     <nav style="font-family: Times New Roman; position: absolute;top:83px;bottom: 0;height: 100%;left: 0;background:#E4FCFF;width: 130px;overflow: hidden;transition: width 0.2s linear;padding: 10px;text-align: left;">
@@ -40,33 +60,31 @@ The Swim Journal | Dashboard
         <input type="submit" value="Create Squad">
     </form>
 
-    <h2>My Squads</h2>
-    <ul class="list-group list-group-flush" id="squads">
-      {% for squad in user.squad %}
-          <table>
-            <th>{{squad.squadName}}</th>
-
-            <th>{{squad.squadCode}}</th>
-          </table>
-      {% endfor %}
-    </ul>
-</div>
-
-{% endblock %} 
-
-{% for time in user.times %}
+<h2>My Squad</h2>
 <table>
-    <tr>
-        <th>{{time.event}}</th>
-        <th>
-            {{time.time}} 
-        </th>
-        <th>
-            {{time.competition}} 
-            <button type="button" class="close" onClick="deleteTimes('{{time.id}}')">
-                <span aria-hidden="true">&times;</span>
-                </button>
-        </th>
-    </tr>
+  <tr>
+    <th>Squad</th>
+    <th>Code</th>
+  </tr>
+  {% for squad in squads %}
+  <tr>
+    <td>{{squad.squadName}}</td>
+    <td>{{squad.squadCode}}</td>
+  </tr>
+  {% endfor %}
 </table>
-{% endfor %}
+
+<h2>My Swimmers</h2>
+<table>
+  <tr>
+    <th>Swimmers</th>
+    <th>Squad</th>
+  </tr>
+  {% for member in members %}
+  <tr>
+    <td>{{member.Forename}}</td>
+    <td>{{member.Surname}}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %} 
