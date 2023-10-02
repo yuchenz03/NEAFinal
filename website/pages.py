@@ -155,7 +155,6 @@ def coachSession():
 @login_required
 @pages.route("/coachSwimmers", methods = {'GET', 'POST'}) 
 def coachSwimmers():
-    user = User.query.filter_by(id=current_user.id).first()
     squad=""
     members=[]
     if request.method == 'POST': 
@@ -173,7 +172,7 @@ def coachSwimmers():
             db.session.commit()
     
             squad_id = squadCode
-            user.squads_id = squad_id  #####THIS IS THE LINE THAT DOESN'T WORK!!!
+            current_user.squads_id = squad_id #THIS IS THE LINE THAT DOESN'T WORK!!!
             squad = Squads.query.get(squad_id)
             members = User.query.filter_by(squads_id=squad_id).all()
             if squad is None:
@@ -181,7 +180,6 @@ def coachSwimmers():
                 squad=[]
             if members is None:
                 members=[]
-            return "user's squad updated successfully"
     
     return render_template("coachSwimmers.html", user=current_user, squad=squad,members=members)
 
