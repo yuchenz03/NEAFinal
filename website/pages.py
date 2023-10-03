@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify #From the flask application, import Blueprint
 from . import db
 from .models import User, Squads, Goals, Journal, Times
+from werkzeug.security import generate_password_hash
 from flask_login import current_user, login_required
 import sqlite3
 from random import randint
@@ -45,14 +46,50 @@ def swimmerDashboard():
 
 ### Pages for the swimmers ###
 @login_required
-@pages.route("/swimmerSession") 
+@pages.route("/swimmerSession", methods=['GET', 'POST']) 
 def swimmerSession():
-    return render_template("swimmerSession.html")
+    if request.method == 'POST': 
+        entry = request.form.get('entry')#Gets the entry from the HTML 
+        
+        if len(entry) < 1:
+            flash('Entry is too short!', category='error') 
+        else:
+            new_entry = Journal(entry=entry, user_id=current_user.id)  #providing the schema for the note 
+            db.session.add(new_entry) #adding the note to the database 
+            db.session.commit()
+            flash('Entry added!', category='success')
+    return render_template("swimmerSession.html", user=current_user)
 
 @login_required
-@pages.route("/swimmerSettings") 
+@pages.route("/swimmerSettings", methods=['GET', 'POST']) 
 def swimmerSettings():
-    return render_template("swimmerSettings.html")
+    if request.method == 'POST':
+        forename = request.form['forename']
+        surname = request.form['surname']
+        squads_id = request.form['squads_id']
+        password1 = request.form['password1']
+        password2 = request.form['password2']
+        
+        if len(forename) < 2:
+            flash('First name must be greater than 1 character.', category='error')
+        elif len(surname) < 2:
+            flash('Surname must be greater than 1 character.', category='error')
+        elif password1 != password2:
+            flash('Passwords don\'t match.', category='error')
+        elif len(password1) < 8:
+            flash('Password must be at least 8 characters.', category='error')
+        
+        # If you want to update the password, handle it securely (e.g., hashing) before saving it.
+        current_user.forename = forename
+        current_user.surname = surname
+        current_user.squads_id = squads_id
+        if len(password1) > 0:
+            current_user.password = generate_password_hash(password1, method='sha256')
+
+        db.session.commit()
+        flash('User information updated successfully', 'success')
+        return redirect(url_for('pages.swimmerSettings'))
+    return render_template("swimmerSettings.html", user=current_user)
 
 @login_required
 @pages.route("/swimmerJournal", methods=["GET","POST"]) 
@@ -93,11 +130,12 @@ def swimmerAttendance():
 def swimmerGoals():
     if request.method == 'POST': 
         goal = request.form.get('goal') #Gets the goal from the HTML 
+        goaltype = request.form.get('goaltype')
         
         if len(goal) < 1:
             flash('Goal is too short!', category='error') 
         else:
-            new_note = Goals(data=goal, user_id=current_user.id)  #providing the schema for the note 
+            new_note = Goals(data=goal, user_id=current_user.id, goaltype=goaltype)  #providing the schema for the note 
             db.session.add(new_note) #adding the note to the database 
             db.session.commit()
             flash('Goal added!', category='success')
@@ -171,22 +209,65 @@ def coachSwimmers():
             db.session.add(new_squad)
             db.session.commit()
     
-            squad_id = squadCode
-            current_user.squads_id = squad_id #THIS IS THE LINE THAT DOESN'T WORK!!!
-            squad = Squads.query.get(squad_id)
+        squad_id = squadCode
+        current_user.squads_id = squad_id
+        db.session.commit()
+        squad = Squads.query.get(squad_id)
+        if squad:
             members = User.query.filter_by(squads_id=squad_id).all()
             if squad is None:
                 # Handle the case where the squad does not exist
                 squad=[]
             if members is None:
                 members=[]
-    
+            db.session.commit()
     return render_template("coachSwimmers.html", user=current_user, squad=squad,members=members)
 
 @login_required
 @pages.route("/coachJournal") 
 def coachJournal():
-    return render_template("coachJournal.html")
+    if request.method == 'POST': 
+        entry = request.form.get('entry')#Gets the entry from the HTML 
+        
+        if len(entry) < 1:
+            flash('Entry is too short!', category='error') 
+        else:
+            new_entry = Journal(entry=entry, user_id=current_user.id)  #providing the schema for the note 
+            db.session.add(new_entry) #adding the note to the database 
+            db.session.commit()
+            flash('Entry added!', category='success')
+            
+    return render_template("coachJournal.html", user=current_user)
+
+
+@login_required
+@pages.route("/coachSettings", methods=['GET', 'POST']) 
+def coachSettings():
+    if request.method == 'POST':
+        forename = request.form['forename']
+        surname = request.form['surname']
+        password1 = request.form['password1']
+        password2 = request.form['password2']
+        
+        if len(forename) < 2:
+            flash('First name must be greater than 1 character.', category='error')
+        elif len(surname) < 2:
+            flash('Surname must be greater than 1 character.', category='error')
+        elif password1 != password2:
+            flash('Passwords don\'t match.', category='error')
+        elif len(password1) < 8:
+            flash('Password must be at least 8 characters.', category='error')
+        
+        # If you want to update the password, handle it securely (e.g., hashing) before saving it.
+        current_user.forename = forename
+        current_user.surname = surname
+        if len(password1) > 0:
+            current_user.password = generate_password_hash(password1, method='sha256')
+
+        db.session.commit()
+        flash('User information updated successfully', 'success')
+        return redirect(url_for('pages.coachSettings'))
+    return render_template("coachSettings.html", user=current_user)
 
 @login_required
 @pages.route("/coachAttendance") 

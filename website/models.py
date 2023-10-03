@@ -6,6 +6,7 @@ class Goals(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     data = db.Column(db.String(10000))
     date = db.Column(db.DateTime(timezone=True), default=func.now())
+    goaltype = db.Column(db.String(50))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class Times(db.Model):
@@ -28,6 +29,15 @@ class Attendance(db.Model):
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+class Questionnaire(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sleep = db.Column(db.Integer())
+    stress = db.Column(db.Integer())
+    fatigue = db.Column(db.Integer())
+    color = db.Column(db.Integer())
+    date = db.Column(db.DateTime(timezone=True), default=func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
 
 class User(db.Model, UserMixin): #Creating the user model
     id = db.Column(db.Integer, primary_key=True) #This userID is the primary key and unique to each user
@@ -43,9 +53,11 @@ class User(db.Model, UserMixin): #Creating the user model
     journal = db.relationship('Journal')
     times = db.relationship('Times')
     attendance = db.relationship('Attendance')
+    questionnaire = db.relationship('Questionnaire')
 
 class Squads(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     squadName = db.Column(db.String(150), unique=True)
     squadCode = db.Column(db.String(4), unique=True)
     user = db.relationship('User', back_populates='squad')
+

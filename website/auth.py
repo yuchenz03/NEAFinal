@@ -29,9 +29,9 @@ def login():
                 flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)
                 if user.role == "swimmer":
-                    return redirect(url_for('pages.swimmerDashboard'))
+                    return redirect(url_for('pages.swimmerSession'))
                 elif user.role == "coach":
-                    return redirect(url_for('pages.coachDashboard'))
+                    return redirect(url_for('pages.coachSession'))
             else:
                 flash('Incorrect password, try again.', category='error')
         else:
