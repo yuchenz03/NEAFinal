@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify #From the flask application, import Blueprint
 from . import db
-from .models import User, Squads, Goals, Journal, Times
+from .models import User, Squads, Goals, Journal, Times, Exercise
 from werkzeug.security import generate_password_hash
 from flask_login import current_user, login_required
 import sqlite3
@@ -186,9 +186,30 @@ def delete_time():
 
 ### Pages for the Coaches ###
 @login_required
-@pages.route("/coachSession") 
+@pages.route("/coachSession", methods=['POST','GET']) 
 def coachSession():
-    return render_template("coachSession.html")
+    if request.method == 'POST': 
+        exercisetype = request.form.get('exercisetype') #Gets the goal from the HTML 
+        reps = request.form.get('reps')
+        
+        new_note = Exercise(name=exercisetype, user_id=current_user.id, reps=reps)  #providing the schema for the note 
+        db.session.add(new_note) #adding the note to the database 
+        db.session.commit()
+        flash('Exercise added!', category='success')
+    return render_template("coachSession.html", user = current_user)
+
+#Used to delete goals
+@pages.route('/delete-exercise', methods=['POST'])
+def delete_exercise():  
+    exercise = json.loads(request.data) # this function expects a JSON from the INDEX.js file 
+    exerciseID = exercise['exerciseID']
+    exercise = Exercise.query.get(exerciseID)
+    if exercise:
+        if exercise.user_id == current_user.id:
+            db.session.delete(exercise)
+            db.session.commit()
+
+    return jsonify({})
 
 @login_required
 @pages.route("/coachSwimmers", methods = {'GET', 'POST'}) 

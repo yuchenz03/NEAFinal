@@ -38,6 +38,11 @@ class Questionnaire(db.Model):
     date = db.Column(db.DateTime(timezone=True), default=func.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+class Exercise(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    reps = db.Column(db.Integer())
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class User(db.Model, UserMixin): #Creating the user model
     id = db.Column(db.Integer, primary_key=True) #This userID is the primary key and unique to each user
@@ -54,6 +59,7 @@ class User(db.Model, UserMixin): #Creating the user model
     times = db.relationship('Times')
     attendance = db.relationship('Attendance')
     questionnaire = db.relationship('Questionnaire')
+    exercise = db.relationship('Exercise')
 
 class Squads(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -25,4 +25,28 @@ The Swim Journal | Dashboard
 
 {% block content %}
 <h1>Today's Session</h1>
+<ul class="list-group list-group-flush" id="set">
+    {% for exercise in user.exercise %}
+    <li class="list-group-item">
+      {{exercise.name}}: {{ exercise.reps }}
+      <button type="button" class="close" onClick="deleteExercise('{{exercise.id}}')">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </li>
+    {% endfor %}
+  </ul>   
+  <form method="POST">
+    <label for="exercisetype">Select Exercise:</label>
+    <select name="exercisetype" id="exercisetype" class="form-control">
+      <option value="Bench Press">Bench Press</option>
+      <option value="Squat Pause">Squat Pause</option>
+      <option value="Hollow Hold">Hollow Hold</option>
+    </select>
+    Repetitions: 
+    <input name="reps" id="reps" class="form-control">
+    <br />
+    <div>
+      <button type="submit" class="btn btn-primary">Add Exercise</button>
+    </div>
+  </form>
 {% endblock %} 

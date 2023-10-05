@@ -24,3 +24,12 @@ function deleteEntry(entryID) {
       window.location.href = "/swimmerJournal";
     });
   }
+
+  function deleteExercise(exerciseID) {
+    fetch("/delete-exercise", {
+      method: "POST",
+      body: JSON.stringify({ exerciseID: exerciseID }),
+    }).then((_res) => {
+      window.location.href = "/coachSession";
+    });
+  }
